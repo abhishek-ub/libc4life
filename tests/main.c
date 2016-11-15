@@ -330,48 +330,6 @@ static void rec_tests() {
   c4str_col_free(&foo);
 }
 
-static void seq_tests() {
-  /*  C4BMAP(bmap, int_cmp);
-
-  // Populate bmap
-  
-  int keys[3] = {1, 2, 3};
-  char vals[3] = {'a', 'b', 'c'};
-  for (int i = 0; i < 3; i++) { c4bmap_add(&bmap, keys+i, vals+i); }
-
-  // Define and initialize seq to stack allocated sequence for bmap,
-  // same as:
-  // 
-  // struct c4bmap_seq _seq;
-  // struct c4seq *seq = c4bmap_seq(&bmap, &_seq);
-  
-  C4SEQ(c4bmap, &bmap, seq);
-
-  // Define and initialize val_seq to stack allocated sequence mapping
-  // lambda over bmap, NULLs are automatically filtered from the result;
-  // same as:
-  //
-  // struct c4map_seq _val_seq;
-  // struct c4seq *val_seq = c4seq_map(seq, C4LAMBDA({
-  //   struct c4bmap_it *it = _it;
-  //   return (it->key == keys + 1) ? it->val : NULL;
-  // }, void *, void *_it), &_val_seq);
-
-  C4SEQ_MAP(seq, {
-      struct c4bmap_it *it = _it;
-      return (it->key == keys + 1) ? it->val : NULL;
-    }, _it, val_seq);
-      
-  // Loop val_seq and check value
-
-  for (char *val; (val = c4seq_next(val_seq));) {
-    assert(val_seq->idx == 1);
-    assert(val == vals + 1);
-  }
-  
-  c4bmap_free(&bmap);*/
-}
-
 static void tbl_seq_tests() {
   struct c4tbl tbl;
   c4tbl_init(&tbl, "foo");
@@ -414,7 +372,6 @@ int main() {
     mslab_tests();
     pair_tests();
     rec_tests();
-    seq_tests();
     tbl_tests();
 
     //C4THROW(&c4err, "test print");

@@ -2,10 +2,10 @@
 #### esoteric C essentials
 
 ### intro
-c4life is a library of ideas and tools that have accumulated over 30 years of writing software for fun. I've found that given a solid foundation, which is what this library is aiming to provide; coding in C is a welcome therapy after seemingly wasting years exploring various ways of pretending the hidden complexity in my stack was someone else's problem. This library is aiming for simplicity and leverage; and it makes a real effort to get there by playing on C's strengths, rather than just inventing yet another buggy Lisp.
+c4life is a library of ideas and tools that have accumulated over 30 years of writing software for fun. I've found that given a solid foundation, which is what this library is aiming to provide; coding in C is a welcome therapy after spending years exploring various ways of pretending the hidden complexity was someone else's problem. This library is aiming for simplicity and leverage; and it makes a real effort to get there by playing on C's strengths, rather than inventing yet another buggy Lisp.
 
 ### motivation
-I've learned a lot from tinkering with my magnum opus in software over the years. As I gained more experience and learned new tricks for managing the sprawling complexity, my ambitions quickly grew to offset any advantage gained. I spent decades searching for the perfect language, discovering the perfect architecture, the perfect database; to conclude that it depends, and that's about as far as that train goes. What it's really all about is attributes such as simplicity, leverage, flexibility, composability, orthogonality etc. And the only language that allows me to pick as many as I can chew from that list is C. 
+I've learned a lot from tinkering with my magnum opus in software over the years. As I gained more experience and learned new tricks for managing the sprawling complexity, my ambitions quickly grew to offset any advantage gained. I spent decades searching for the perfect language, discovering the perfect architecture, the perfect database; to conclude that it depends, and that's about as far as that train goes. What it's really all about is attributes such as simplicity, leverage, modularity, orthogonality etc. And the only language that allows picking as many as you can chew from that list is C. 
 
 ### status
 Any feature documented here can be assumed to be reasonably stable. I'll add more pleasant surprises as soon as I consider them polished enough for a wider audience. 
@@ -220,61 +220,7 @@ void coro_tests() {
 ```
 
 ### sequences
-c4life implements several types that provide a sequence of values; embedded lists, dynamic arrays, ordered sets and maps, tables and more. Each of them provide a function in the form of ```struct c4seq *[type]_seq(self, seq)``` to initialize a new sequential view of self. Any memory allocated by the sequence is automatically deallocated when it reaches it's end, or manually by calling ```c4seq_free(seq)```. All operations in the following example are supported by any type that implements the sequence protocol.
-
-```C
-
-#include <c4life/seqs/bmap.h>
-
-int int_cmp(void *_x, void *_y, void *data) {
-  int *x = _x, *y = _y;
-  if  (*x < *y) return -1;
-  return *x > *y;
-}
-
-void seq_tests() {
-  C4BMAP(bmap, int_cmp);
-
-  // Populate bmap
-  
-  int keys[3] = {1, 2, 3};
-  char vals[3] = {'a', 'b', 'c'};
-  for (int i = 0; i < 3; i++) { c4bmap_add(&bmap, keys+i, vals+i); }
-
-  // Define and initialize seq to stack allocated sequence for bmap,
-  // same as:
-  // 
-  // struct c4bmap_seq _seq;
-  // struct c4seq *seq = c4bmap_seq(&bmap, &_seq);
-  
-  C4SEQ(c4bmap, &bmap, seq);
-
-  // Define and initialize val_seq to stack allocated sequence mapping
-  // lambda over bmap, NULLs are automatically filtered from the result;
-  // same as:
-  //
-  // struct c4seq_map _val_seq;
-  // struct c4seq *val_seq = c4seq_map(seq, C4LAMBDA({
-  //   struct c4bmap_it *it = _it;
-  //   return (it->key == keys + 1) ? it->val : NULL;
-  // }, void *, void *_it), &_val_seq);
-
-  C4SEQ_MAP(seq, {
-      struct c4bmap_it *it = _it;
-      return (it->key == keys + 1) ? it->val : NULL;
-    }, _it, val_seq);
-      
-  // Loop val_seq and check value
-  
-  for (char *val; (val = c4seq_next(val_seq));) {
-    assert(val_seq->idx == 1);
-    assert(val == vals + 1);
-  }
-  
-  c4bmap_free(&bmap);
-}
-
-```
+c4life implements several types that provide a sequence of values; embedded lists, dynamic arrays, ordered sets and maps, tables and more. Each of them provide a function in the form of ```struct c4seq *[type]_seq(self, seq)``` to initialize a new sequential view of self. Any memory allocated by the sequence is automatically deallocated when it reaches it's end, or manually by calling ```c4seq_free(seq)```.
 
 #### dynamic arrays
 c4life provides dynamic arrays with user specified item size; they're implemented as a single block of memory that is grown automatically when needed.

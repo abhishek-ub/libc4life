@@ -20,7 +20,7 @@ static void *acquire(struct c4malloc *_self, size_t size) {
 struct my_malloc *my_malloc_init(struct my_malloc *self) {
   c4malloc_init(&self->malloc);
   self->malloc.acquire = acquire;
-  self->malloc.release = NULL; //release;
+  //self->malloc.release = release;
 
   // Initialize your state here
   
