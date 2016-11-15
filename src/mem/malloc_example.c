@@ -10,17 +10,17 @@ static void *acquire(struct c4malloc *_self, size_t size) {
   return NULL;
 }
 
-static void release(struct c4malloc *_self, void *ptr) {
+//static void release(struct c4malloc *_self, void *ptr) {
   //struct my_malloc *self = C4PTROF(my_malloc, malloc, _self);
 
   // Implementing release is optional,
   // as long as all memory is deallocated with the allocator
-}
+//}
 
 struct my_malloc *my_malloc_init(struct my_malloc *self) {
   c4malloc_init(&self->malloc);
   self->malloc.acquire = acquire;
-  self->malloc.release = release;
+  self->malloc.release = NULL; //release;
 
   // Initialize your state here
   

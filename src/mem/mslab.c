@@ -38,7 +38,7 @@ void *c4mslab_acquire(struct c4mslab *self, size_t size) {
 
     if (size <= it->size - it->offs) {      
       void *ptr = it->data + it->offs;
-      it->offs += size;   
+      it->offs += size;
       return ptr;
     } else if (it->skipped || it->offs == it->size) {
 	c4ls_delete(&it->its_node);
