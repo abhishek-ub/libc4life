@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "c4.h"
 #include "mem/mfreel.h"
 #include "mem/mpool.h"
@@ -12,19 +13,22 @@
 #define ITERS 1000000
 #define MAX_SIZE 10000
 
-#define _BENCHMARK(name, malloc, _t)			\
-  struct c4timer _t;					\
-  c4timer_reset(&_t);					\
-  C4TIMER_RUN(&_t) { run(malloc); }			\
+#define _BENCHMARK(name, malloc, _t)		\
+  struct c4timer _t;				\
+  c4timer_reset(&_t);				\
+  srand(rand_seed);				\
+  C4TIMER_RUN(&_t) { run(malloc); }		\
   printf("%-20s %15" PRIu64 " %15" PRIu64 "\n",	\
-	 name,_t.cpu, _t.real)				\
+	 name,_t.cpu, _t.real)			\
 
 #define BENCHMARK(name, malloc)			\
   _BENCHMARK((name), malloc, C4GSYM(t))		\
 
 static void run(struct c4malloc *m) {
   for (int i = 0; i < ITERS; i++) {
-    void *ptr = c4malloc_acquire(m, (int)(c4rnd()*MAX_SIZE));
+    double prob = rand() / (double) RAND_MAX;
+    size_t size = (size_t)(prob * MAX_SIZE);
+    void *ptr = c4malloc_acquire(m, size);
     c4malloc_release(m, ptr);
   }
 }
@@ -33,6 +37,7 @@ static void run(struct c4malloc *m) {
 
 void malloc_perf_tests() {
   printf("%-20s %15s %15s\n", "name", "cpu", "real");
+  unsigned int rand_seed = time(NULL);
 
   // --- basic ---
 

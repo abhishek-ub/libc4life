@@ -1,5 +1,5 @@
+#include "c4.h"
 #include "pair.h"
-#include "utils.h"
 
 struct c4pair *c4pair(size_t left, size_t right) {
   struct c4pair *p = c4acquire(sizeof(struct c4pair) + left + right);

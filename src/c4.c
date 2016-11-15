@@ -47,3 +47,6 @@ void c4free() {
   C4LS_DO(c4val_ts(), t) { c4val_t_free(C4PTROF(c4val_t, ts_node, t)); }
 }
 
+void *c4acquire(size_t size) { return c4malloc_acquire(c4ctx()->malloc, size); }
+
+void c4release(void *ptr) { c4malloc_release(c4ctx()->malloc, ptr); }
