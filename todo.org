@@ -1,8 +1,10 @@
+* add C4BSET_DO, call DYNA_DO
+* add c4ls_seq
+** encapsulate next pre-fetch from LS_DO
 * rename err_start()/_next() to try_X()
 * add automagic freeing of cols & tbls like err/val types
 * add vicsy_peer_save()
 
-* add test for random insert into bset
 * add c4ls to readme
 * ---
 * implement c4set_merge()
@@ -10,14 +12,9 @@
 ** merge rec
 * add vicsy_peer_load()
 * ---
-* add C4SLAB_DO
 * add C4BMAP_DO
 ** loop entries
 ** use in tbl & rec
-* add c4ls_seq
-** encapsulate next pre-fetch from LS_DO
-* add c4array_seq
-** init with void *, len & it_size
 * add c4seq_skip(size_t n)
 ** add skip(n) method
 ** do nothing but increase idx if NULL
