@@ -1,8 +1,10 @@
 * add c4ls to readme
 ** add test with struct
 * add C4BSET_DO, call DYNA_DO
+* add c4pair to readme
 * add c4ls_seq
 ** encapsulate next pre-fetch from LS_DO
+* add c4bmap to readme
 * rename err_start()/_next() to try_X()
 * add automagic freeing of cols & tbls like err/val types
 * add vicsy_peer_save()

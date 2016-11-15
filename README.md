@@ -219,7 +219,55 @@ void coro_tests() {
 ```
 
 ### sequences
-c4life implements several types that provide a sequence of values; embedded lists, dynamic arrays, binary sets and maps, tables and more. Each of them provide a function in the form of ```struct c4seq *[type]_seq(self, seq)``` to initialize a new sequential view of self. Any memory allocated by the sequence is automatically deallocated when it reaches it's end, or manually by calling ```c4seq_free(seq)```.
+c4life implements several types that provide a sequence of values; linked lists, dynamic arrays, binary sets and maps, tables and more. Each of them provide a function in the form of ```struct c4seq *[type]_seq(self, seq)``` to initialize a new sequential view of self. Any memory allocated by the sequence is automatically deallocated when it reaches it's end, or manually by calling ```c4seq_free(seq)```.
+
+#### linked lists
+c4life provides double linked lists that are designed to allow embedding. They are especially useful where there is a need to keep track of a list of structs. Since links are allocated with the struct; they enable building fully stack allocated, linked sequences. And since the list is double linked, removing items is O(1). There is no separate root type, any node can be a root.
+
+```C
+
+struct ls_it {
+  // Links are embedded in the item
+  
+  struct c4ls ls;
+};
+
+void ls_splice_tests() {
+  // Initialize lists
+
+  C4LS(foo);
+  C4LS(bar);
+
+  // Add items to lists.
+  // All list operations are node based,
+  // prepending to root is the same as appending
+  // to the list.
+  
+  const int MAX = 100;
+  struct ls_it its[MAX];
+
+  for (int i = 0; i < MAX/2; i++) {
+    c4ls_prepend(&foo, &its[i].ls);
+    c4ls_prepend(&bar, &its[i+MAX/2].ls);    
+  }
+
+  // Append all items in bar to foo by linking
+  // the entire list to the end.
+  
+  c4ls_splice(&foo, bar.next, bar.prev);
+
+  // Check that all items are now in foo
+  
+  int i = 0;  
+  C4LS_DO(&foo, it) { assert(it == &its[i++].ls); }
+
+  // bar is left untouched, and needs to be re-initialized 
+  // before further use as a root
+
+  c4ls_init(&bar);
+}
+
+```
 
 #### dynamic arrays
 c4life provides dynamic arrays with user defined item size; they're implemented as a single block of memory that is grown automatically when needed.

@@ -4,12 +4,16 @@
 #include <stdbool.h>
 #include "macros.h"
 
+#define C4LS(var)				\
+  struct c4ls var;				\
+  c4ls_init(&var)				\
+
 #define _C4LS_DO(ls, var, _root, _next)					\
   for (struct c4ls *_root = ls, *var = _root->next, *_next = var->next; \
        var != _root;							\
        var = _next, _next = var->next)					\
     
-#define C4LS_DO(ls, var)					\
+#define C4LS_DO(ls, var)				\
   _C4LS_DO((ls), var, C4GSYM(root), C4GSYM(next))	\
 
 struct c4ls {

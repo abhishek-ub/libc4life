@@ -223,28 +223,45 @@ static void lambda_tests() {
   assert(C4LAMBDA({ return x*y; }, int, int x, int y)(2, 3) == 6);
 }
 
+struct ls_it {
+  // The links are embedded in the item
+  
+  struct c4ls ls;
+};
+
 static void ls_splice_tests() {
-  struct c4ls foo;
-  struct c4ls bar;
-  struct c4ls its[10];
+  // Initialize lists
 
-  c4ls_init(&foo);
-  c4ls_init(&bar);
+  C4LS(foo);
+  C4LS(bar);
+
+  // Add items to lists.
+  // All list operations are node based,
+  // prepending to root is the same as appending
+  // to the list.
   
-  for (int i = 0; i < 5; i++) {
-    c4ls_prepend(&foo, its+i);
-    c4ls_prepend(&bar, its+i+5);    
+  const int MAX = 100;
+  struct ls_it its[MAX];
+
+  for (int i = 0; i < MAX/2; i++) {
+    c4ls_prepend(&foo, &its[i].ls);
+    c4ls_prepend(&bar, &its[i+MAX/2].ls);    
   }
 
+  // Append all items in bar to foo by linking
+  // the entire list to the end.
+  
   c4ls_splice(&foo, bar.next, bar.prev);
-  struct c4ls *it = &foo;
-  
-  for (int i = 0; i < 10; i++) {
-    it = it->next;
-    assert(it == its+i);
-  }
 
-  assert(it->next == &foo);
+  // Check that all items are now in foo
+  
+  int i = 0;  
+  C4LS_DO(&foo, it) { assert(it == &its[i++].ls); }
+
+  // bar is left untouched, and needs to be re-initialized 
+  // before further use as a root
+
+  c4ls_init(&bar);
 }
 
 static void ls_tests() {
