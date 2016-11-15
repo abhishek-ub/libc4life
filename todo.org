@@ -1,6 +1,3 @@
-* solve valgrind bmap errors
-** switch off debug
-
 * rename err_start()/_next() to try_X()
 * add automagic freeing of cols & tbls like err/val types
 * add vicsy_peer_save()
