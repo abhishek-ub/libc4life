@@ -144,7 +144,8 @@ void mfreel_tests() {
 ```
 
 #### performance
-The short story is that slabs are faster than the basic allocator; using a pool slows things down a bit; and adding a freelist to recycle pointers is typically about as fast as just using slabs, while reducing memory usage.
+The short story is that slabs are faster than the basic allocator; adding a free list to recycle pointers is typically about as fast, while reducing memory usage. The reason the 'pool/slab' combination sticks out is that the added overhead pushes the number of slab allocations, the problem disappears when a free list is added in front. I still haven't solved the mystery of why the pool allocator by itself is faster than the basic allocator; some kind of alignment effect from the prefix, maybe; all I know is it executes additional code before delegating to the basic allocator, allocates additional memory, and still manages to run faster.
+
 
 ### lambdas
 The ```C4LAMBDA()``` macro defines anonymous nested functions.
