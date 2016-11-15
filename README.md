@@ -226,6 +226,8 @@ c4life provides double linked lists that are designed to allow embedding. They a
 
 ```C
 
+#include <c4life/seqs/ls.h>
+
 struct ls_it {
   // Links are embedded in the item
   
@@ -303,7 +305,7 @@ void dyna_tests() {
 ```
 
 #### binary sets
-c4life's binary sets are implemented as dynamic, binary searched arrays. Like dynamic arrays, they support user defined item sizes. The constructor requires a comparison function to be used for searching, the optional field cmp_data is passed on to the function. Ordered sets also support specifying a function to get the key for a given item; which allows using them as maps with embedded keys.
+c4life's binary sets are implemented as dynamic, binary searched arrays. Like dynamic arrays, they support user defined item sizes. The constructor requires a comparison function to be used for searching, the optional field cmp_data is passed on to the function. To enable using sets as maps with embedded keys, they support specifying a function to get the key for a given item.
 
 ```C
 
