@@ -1,3 +1,5 @@
+* add c4ls to readme
+** add test with struct
 * add C4BSET_DO, call DYNA_DO
 * add c4ls_seq
 ** encapsulate next pre-fetch from LS_DO
@@ -5,7 +7,6 @@
 * add automagic freeing of cols & tbls like err/val types
 * add vicsy_peer_save()
 
-* add c4ls to readme
 * ---
 * implement c4set_merge()
 * add tbl_reset()
