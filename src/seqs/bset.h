@@ -33,7 +33,7 @@ void *c4bset_find(struct c4bset *self, void *key, size_t start, size_t *idx);
 void *c4bset_get(struct c4bset *self, void *key);
 void *c4bset_idx(struct c4bset *self, size_t idx);
 void *c4bset_insert(struct c4bset *self, size_t idx);
-size_t cbset_len(struct c4bset *self);
+size_t c4bset_len(struct c4bset *self);
 void c4bset_merge(struct c4bset *self, struct c4bset *src);
 
 struct c4seq *c4bset_seq(struct c4bset *self, struct c4bset_seq *seq);

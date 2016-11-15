@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "coro.h"
 #include "macros.h"
@@ -57,7 +58,7 @@ void *c4bset_insert(struct c4bset *self, size_t idx) {
   return c4dyna_insert(&self->its, idx);
 }
 
-size_t cbset_len(struct c4bset *self) { return self->its.len; }
+size_t c4bset_len(struct c4bset *self) { return self->its.len; }
 
 void c4bset_merge(struct c4bset *self, struct c4bset *src) {
 }

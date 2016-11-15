@@ -92,18 +92,33 @@ static void bmap_tests() {
 }
 
 static void bset_tests() {
-  static int MAX = 100;
-  C4BSET(set, sizeof(int), int_cmp);
-  for (int i = 0; i < MAX; i++) { *(int *)c4bset_add(&set, &i) = i; }
-
-  assert(cbset_len(&set) == MAX);
+  // Initialize set and populate in reverse order
   
-  for (int i = 0; i < MAX; i++) {
-    assert(*(int *)c4bset_get(&set, &i) == i);
-    assert(*(int *)c4bset_idx(&set, i) == i);
+  C4BSET(set, sizeof(int), int_cmp);
+  C4DEFER({ c4bset_free(&set); });
+
+  static int MAX = 100;
+
+  for (int i = MAX-1; i >= 0; i--) {
+    // c4bset_add returns a pointer to the added item,
+    // it couldn't care less how the data is copied
+    
+    *(int *)c4bset_add(&set, &i) = i;
   }
 
-  c4bset_free(&set);
+  // Check number of items
+
+  assert(c4bset_len(&set) == MAX);
+  
+  for (int i = 0; i < MAX; i++) {
+    // Look up item by key
+
+    assert(*(int *)c4bset_get(&set, &i) == i);
+
+    // Look up item by index
+    
+    assert(*(int *)c4bset_idx(&set, i) == i);
+  }
 }
 
 static void col_tests() {

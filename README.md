@@ -144,8 +144,7 @@ void mfreel_tests() {
 ```
 
 #### performance
-The short story is that slabs are faster than the basic allocator; adding a free list to recycle pointers is typically about as fast, while reducing memory usage. The reason the 'pool/slab' combination sticks out is that the added overhead pushes the number of slab allocations, the problem disappears when a free list is added in front. I still haven't solved the mystery of why the pool allocator by itself is faster than the basic allocator; some kind of alignment effect from the prefix, maybe; all I know is it executes additional code before delegating to the basic allocator, allocates additional memory, and still manages to run faster.
-
+The short story is that slabs are faster than the basic allocator; adding a free list to recycle pointers is typically about as fast, while reducing memory usage. The reason the pool/slab combination sticks out is most probably that the added overhead pushes the number of slab allocations, the problem disappears when a free list is added in front. I still haven't solved the mystery of why the pool allocator by itself is faster than the basic allocator; some kind of alignment effect from the prefix, maybe; all I know is it executes additional code before delegating to the basic allocator, allocates additional memory, and still manages to run faster.
 
 ### lambdas
 The ```C4LAMBDA()``` macro defines anonymous nested functions.
@@ -220,10 +219,10 @@ void coro_tests() {
 ```
 
 ### sequences
-c4life implements several types that provide a sequence of values; embedded lists, dynamic arrays, ordered sets and maps, tables and more. Each of them provide a function in the form of ```struct c4seq *[type]_seq(self, seq)``` to initialize a new sequential view of self. Any memory allocated by the sequence is automatically deallocated when it reaches it's end, or manually by calling ```c4seq_free(seq)```.
+c4life implements several types that provide a sequence of values; embedded lists, dynamic arrays, binary sets and maps, tables and more. Each of them provide a function in the form of ```struct c4seq *[type]_seq(self, seq)``` to initialize a new sequential view of self. Any memory allocated by the sequence is automatically deallocated when it reaches it's end, or manually by calling ```c4seq_free(seq)```.
 
 #### dynamic arrays
-c4life provides dynamic arrays with user specified item size; they're implemented as a single block of memory that is grown automatically when needed.
+c4life provides dynamic arrays with user defined item size; they're implemented as a single block of memory that is grown automatically when needed.
 
 ```C
 
@@ -252,6 +251,45 @@ void dyna_tests() {
   c4dyna_free(&arr);
 }
 
+
+```
+
+#### binary sets
+c4life's binary sets are implemented as dynamic, binary searched arrays. Like dynamic arrays, they support user defined item sizes. The constructor requires a comparison function to be used for searching, the optional field cmp_data is passed on to the function. Ordered sets also support specifying a function to get the key for a given item; which allows using them as maps with embedded keys.
+
+```C
+
+#include <c4life/seqs/bset.h>
+
+void bset_tests() {
+  // Initialize set and populate in reverse order
+  
+  C4BSET(set, sizeof(int), int_cmp);
+  C4DEFER({ c4bset_free(&set); });
+
+  static int MAX = 100;
+
+  for (int i = MAX-1; i >= 0; i--) {
+    // c4bset_add returns a pointer to the added item,
+    // it couldn't care less how the data is copied
+    
+    *(int *)c4bset_add(&set, &i) = i;
+  }
+
+  // Check number of items
+
+  assert(c4bset_len(&set) == MAX);
+  
+  for (int i = 0; i < MAX; i++) {
+    // Look up item by key
+
+    assert(*(int *)c4bset_get(&set, &i) == i);
+
+    // Look up item by index
+    
+    assert(*(int *)c4bset_idx(&set, i) == i);
+  }
+}
 
 ```
 

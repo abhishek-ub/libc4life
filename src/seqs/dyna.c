@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include "dyna.h"
 #include "macros.h"
 
@@ -30,7 +31,7 @@ void *c4dyna_idx(struct c4dyna *self, size_t idx) {
 void *c4dyna_insert(struct c4dyna *self, size_t idx) {
     if (self->len == self->its.len) { c4slab_grow(&self->its, self->len + 1); }
 
-    if (idx < self->len-1) {
+    if (idx < self->len) {
       c4slab_move(&self->its, idx+1, idx, self->len - idx);
     }
 
