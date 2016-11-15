@@ -279,9 +279,11 @@ c4life provides dynamic arrays with user defined item size; they're implemented 
 #include <c4life/seqs/dyna.h>
 
 void dyna_tests() {
-  // Declare and initialize dynamic array named arr for int sized items
+  // Initialize arr for int sized items
   
   C4DYNA(arr, sizeof(int));
+  C4DEFER({ c4dyna_free(&arr); });
+
   const int LEN = 10;
 
   // Preallocate to fit at least LEN/2 items
@@ -297,8 +299,6 @@ void dyna_tests() {
 
   for (int i = LEN-1; i >= 0; i--) { *(int *)c4dyna_pop(&arr) = i; }
   assert(arr.len == 0);
-
-  c4dyna_free(&arr);
 }
 
 
