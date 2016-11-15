@@ -1,12 +1,12 @@
-* change map to use pairs for key/val
-** init offs on insert
-** convert api like set
-** add key_size / value_size params
+* solve valgrind bmap errors
+** switch off debug
 
 * rename err_start()/_next() to try_X()
 * add automagic freeing of cols & tbls like err/val types
 * add vicsy_peer_save()
 
+* add test for random insert into bset
+* add c4ls to readme
 * ---
 * implement c4set_merge()
 * add tbl_reset()

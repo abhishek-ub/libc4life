@@ -28,30 +28,35 @@ static int int_cmp(void *_x, void *_y, void *data) {
 }
 
 static void bmap_add_tests() {
-  C4BMAP(m, int_cmp);
-  int ks[3] = {1, 2, 3};
-  char vs[3] = {'a', 'b', 'c'};
-  
-  c4bmap_add(&m, ks+1, vs+1);
-  c4bmap_add(&m, ks+2, vs+2);
-  c4bmap_add(&m, ks, vs);
+  C4BMAP(m, sizeof(int), sizeof(char), int_cmp);
 
-  for (int i = 0; i < 3; i++) {assert(c4bmap_get(&m, ks+i) == vs+i); }
+  for (int i = 0; i < 10; i++) {
+    struct c4pair *it = c4bmap_add(&m, &i);
+    *(int *)c4pair_left(it) = i;
+    *(char *)c4pair_right(it) = 'a' + i;
+  }
+    
+  for (int i = 0; i < 10; i++) {
+    assert(*(char *)c4bmap_get(&m, &i) == 'a' + i);
+  }
   
   c4bmap_free(&m);
 }
 
 static void bmap_seq_tests() {
-  C4BMAP(m, int_cmp);
-  int ks[3] = {1, 2, 3};
-  char vs[3] = {'a', 'b', 'c'};
-  for (int i = 0; i < 3; i++) { c4bmap_add(&m, ks, vs); }
+  C4BMAP(m, sizeof(int), sizeof(char), int_cmp);
+
+  for (int i = 0; i < 10; i++) {
+    struct c4pair *it = c4bmap_add(&m, &i);
+    *(int *)c4pair_left(it) = i;
+    *(char *)c4pair_right(it) = 'a' + i;
+  }
 
   int i = 0;
 
   C4SEQ(c4bmap, &m, seq);
-  for (struct c4bmap_it *it; (it = c4seq_next(seq));) {
-    assert(it->key == ks+i);
+  for (struct c4pair *it; (it = c4seq_next(seq));) {
+    assert(*(int *)c4pair_left(it) == i);
     i++;
   }
 
@@ -59,13 +64,24 @@ static void bmap_seq_tests() {
 }
 
 static void bmap_set_tests() {
-  C4BMAP(m, int_cmp);
-  int ks[3] = {1, 2, 3};
-  char vs[3] = {'a', 'b', 'c'};
+  C4BMAP(m, sizeof(int), sizeof(char), int_cmp);
 
-  for (int i = 0; i < 3; i++) { c4bmap_add(&m, ks+i, vs+i); }
-  for (int i = 0; i < 3; i++) { c4bmap_set(&m, ks+i, vs+3-i); }
-  for (int i = 0; i < 3; i++) { assert(c4bmap_get(&m, ks+i) == vs+3-i); }
+  for (int i = 0; i < 5; i++) {
+    struct c4pair *it = c4bmap_add(&m, &i);
+    *(int *)c4pair_left(it) = i;
+    *(char *)c4pair_right(it) = 'a' + i;
+  }
+  
+  for (int i = 0; i < 10; i++) {
+    struct c4pair *it = c4bmap_set(&m, &i);
+    if (i > 4) { *(int *)c4pair_left(it) = i; }
+    *(char *)c4pair_right(it) = 'z' - i;    
+  }
+  
+  for (int i = 0; i < 10; i++) {
+    assert(*(char *)c4bmap_get(&m, &i) == 'z' - i);
+  }
+  
   c4bmap_free(&m);
 }
 
@@ -315,7 +331,7 @@ static void rec_tests() {
 }
 
 static void seq_tests() {
-  C4BMAP(bmap, int_cmp);
+  /*  C4BMAP(bmap, int_cmp);
 
   // Populate bmap
   
@@ -353,7 +369,7 @@ static void seq_tests() {
     assert(val == vals + 1);
   }
   
-  c4bmap_free(&bmap);
+  c4bmap_free(&bmap);*/
 }
 
 static void tbl_seq_tests() {
