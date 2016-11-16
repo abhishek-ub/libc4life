@@ -34,6 +34,7 @@ void c4dyna_delete(struct c4dyna *self, size_t idx);
 void c4dyna_grow(struct c4dyna *self, size_t len);
 void *c4dyna_idx(struct c4dyna *self, size_t idx);
 void *c4dyna_insert(struct c4dyna *self, size_t idx);
+size_t c4dyna_it_size(struct c4dyna *self);
 void *c4dyna_pop(struct c4dyna *self);
 void *c4dyna_push(struct c4dyna *self);
 struct c4seq *c4dyna_seq(struct c4dyna *self, struct c4dyna_seq *seq);

@@ -3,9 +3,9 @@
 
 #include <seqs/dyna.h>
 
-#define _C4DEFER(code, _def)				\
-  void _def() code;					\
-  bool _def_trigger __attribute__((cleanup(_def)))	\
+#define _C4DEFER(code, _def)					\
+  void _def() code;						\
+  bool C4SYMS(_def, _trigger) __attribute__((cleanup(_def)))	\
 
 #define C4DEFER(code)				\
   _C4DEFER(code, C4GSYM(def))			\

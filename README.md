@@ -319,12 +319,7 @@ void bset_tests() {
 
   static int MAX = 100;
 
-  for (int i = MAX-1; i >= 0; i--) {
-    // c4bset_add returns a pointer to the added item,
-    // it couldn't care less how the data is copied
-    
-    *(int *)c4bset_add(&set, &i) = i;
-  }
+  for (int i = MAX-1; i >= 0; i--) { C4BSET_ADD(&set, int, i); }
 
   // Check number of items
 

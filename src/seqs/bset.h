@@ -10,8 +10,14 @@
   struct c4bset var;				\
   c4bset_init(&var, key_size, cmp);		\
 
+#define C4BSET_ADD(set, type, it)			\
+  {							\
+    assert(c4dyna_it_size(&(set)->its) == sizeof(it));	\
+    *(type *)c4bset_add(set, &it) = it;			\
+  }							\
+
 #define C4BSET_DO(set, it)			\
-    C4DYNA_DO(&set->its, it)			\
+  C4DYNA_DO(&(set)->its, it)			\
   
 typedef int (*c4cmp_t)(void *x, void *y, void *data);
 typedef void *(*c4bset_key_fnt)(void *it);

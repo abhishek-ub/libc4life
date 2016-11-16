@@ -10,11 +10,13 @@ struct c4val_t c4str;
 
 C4STATIC(c4ls, c4val_ts);
 
-static int int32_cmp(void *left, void *right) {
-  return *(int32_t *)left == *(int32_t *)right;
+int c4cmp_int32(void *left, void *right) {
+  int32_t l = *(int32_t *)left, r = *(int32_t *)right;
+  if  (l < r) return -1;
+  return l > r;
 }
 
-static void *str_clone(void *val) { return strdup(*(char **)val); }
+static void str_clone(void *val) { *(char **)val = strdup(*(char **)val); }
 
 static int str_cmp(void *left, void *right) {
   return strcmp(*(char **)left, *(char **)right);
@@ -24,7 +26,7 @@ static void str_free(void *val) { free(*(char **)val); }
 
 void c4init_val_ts() {
   c4val_t_init(&c4int32, "int32", sizeof(int32_t));
-  c4int32.cmp_vals = int32_cmp;
+  c4int32.cmp_vals = c4cmp_int32;
   
   c4val_t_init(&c4str, "str", sizeof(char *));
   c4str.clone_val = str_clone;
@@ -48,9 +50,8 @@ void c4val_t_free(struct c4val_t *self) {
   c4ls_delete(&self->ts_node);
 }
 
-void *c4val_clone(struct c4val_t *type, void *val) {
-  if (type->clone_val) { return type->clone_val(val); }
-  return val;
+void c4val_clone(struct c4val_t *type, void *val) {
+  if (type->clone_val) { type->clone_val(val); }
 }
 
 int c4val_cmp(struct c4val_t *type, void *left, void *right) {

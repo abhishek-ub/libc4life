@@ -39,6 +39,10 @@ void *c4dyna_insert(struct c4dyna *self, size_t idx) {
     return c4slab_idx(&self->its, idx);
 }
 
+size_t c4dyna_it_size(struct c4dyna *self) {
+  return self->its.it_size;
+}
+
 void *c4dyna_pop(struct c4dyna *self) {
   assert(self->len > 0);
   self->len--;

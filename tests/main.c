@@ -99,13 +99,8 @@ static void bset_tests() {
 
   static int MAX = 100;
 
-  for (int i = MAX-1; i >= 0; i--) {
-    // c4bset_add returns a pointer to the added item,
-    // it couldn't care less how the data is copied
-    
-    *(int *)c4bset_add(&set, &i) = i;
-  }
-
+  for (int i = MAX-1; i >= 0; i--) { C4BSET_ADD(&set, int, i); }
+  
   // Check number of items
 
   assert(c4bset_len(&set) == MAX);
@@ -345,51 +340,36 @@ struct rec {
 };
   
 static void rec_tests() {
-  // Define record type
-  C4REC_T(t);
+  // Initialize record type
+  
+  C4REC_T(t, rec);
   c4rec_int32(&t, "int32", C4FLD(rec, int32));
   c4rec_str(&t, "str", C4FLD(rec, str));
+  C4DEFER({ c4rec_t_free(&t); });
 
-  // Initialize record
-  struct rec foo;
-  c4rec_init(&foo.rec, &t, NULL);
-  foo.int32 = 42;
-  foo.str = strdup("abc");
+  // Initialize table
 
+  C4TBL(tbl, "tbl", &t);
+  C4DEFER({ c4tbl_free(&tbl); });
+  
+  // Initialize record,
+  // NULL generates new id
+  
+  struct rec *_foo = (struct rec *)c4tbl_set(&tbl, NULL);
+  _foo->int32 = 42;
+  _foo->str = strdup("abc");
+
+  // Copy record to value before next set
+
+  struct rec foo = *_foo;
+  
   // Copy all fields from foo to new record.
   // Implemented as assignment followed by cloning values
   // for relevant fields.
 
-  struct rec bar;
-  C4REC_CLONE(&bar, &foo);
-  assert(c4rec_cmp(&bar.rec, &foo.rec) == 0);
-
-  c4rec_free(&foo.rec);
-  c4rec_free(&bar.rec);
-
-  c4rec_t_free(&t);
-}
-
-static void tbl_seq_tests() {
-/*
-  struct c4tbl tbl;
-  c4tbl_init(&tbl, "foo");
- 
-  struct c4rec rec;
-  c4rec_init(&rec, NULL);
-  c4tbl_upsert(&tbl, &rec);
-
-  C4SEQ(c4tbl, &tbl, seq);  
-  assert(c4uid_cmp(((struct c4rec *)c4seq_next(seq))->id, rec.id) == 0);
-  assert(c4seq_next(seq) == NULL);
-
-  c4rec_free(&rec);
-  c4tbl_free(&tbl);
-*/
-}
-
-static void tbl_tests() {
-  tbl_seq_tests();
+  struct rec *bar = (struct rec *)c4tbl_set(&tbl, NULL);
+  C4REC_COPY(bar, &foo);
+  assert(c4rec_cmp(&bar->rec, &foo.rec) == 0);
 }
 
 void malloc_perf_tests();
@@ -413,7 +393,6 @@ int main() {
     mslab_tests();
     pair_tests();
     rec_tests();
-    tbl_tests();
 
     //C4THROW(&c4err, "test print");
   }

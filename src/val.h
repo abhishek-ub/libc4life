@@ -8,7 +8,7 @@ struct c4val_t {
   size_t size;
   struct c4ls ts_node;
 
-  void *(*clone_val)(void *);
+  void (*clone_val)(void *);
   int (*cmp_vals)(void *, void *);
   void (*free_val)(void *);
 };
@@ -18,6 +18,7 @@ extern struct c4val_t c4str;
 
 void c4init_val_ts();
 struct c4ls *c4val_ts();
+int c4cmp_int32(void *left, void *right);
 
 struct c4val_t *c4val_t_init(struct c4val_t *self,
 			     const char *name,
@@ -25,7 +26,7 @@ struct c4val_t *c4val_t_init(struct c4val_t *self,
 
 void c4val_t_free(struct c4val_t *self);
 
-void *c4val_clone(struct c4val_t *type, void *val);
+void c4val_clone(struct c4val_t *type, void *val);
 int c4val_cmp(struct c4val_t *type, void *left, void *right);
 void c4val_free(struct c4val_t *type, void *val);
 

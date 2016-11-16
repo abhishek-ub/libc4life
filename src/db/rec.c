@@ -8,14 +8,19 @@
 #include "seqs/slab.h"
 #include "val.h"
 
-struct c4rec_t *c4rec_t_init(struct c4rec_t *self) {
+C4STATIC(c4ls, c4rec_ts);
+
+struct c4rec_t *c4rec_t_init(struct c4rec_t *self, size_t size) {
+  self->size = size;
   c4bmap_init(&self->flds, sizeof(c4fld_t), sizeof(struct c4fld), c4fld_t_cmp);
+  c4ls_prepend(c4rec_ts(), &self->ts_node);
   return self;
 }
 
 void c4rec_t_free(struct c4rec_t *self) {
   C4BMAP_DO(&self->flds, it) { c4fld_free(c4pair_right(it)); }
   c4bmap_free(&self->flds);
+  c4ls_delete(&self->ts_node);
 }
 
 struct c4fld *c4rec_fld(struct c4rec_t *self,
@@ -35,10 +40,8 @@ struct c4fld *c4rec_str(struct c4rec_t *self, const char *name, c4fld_t offs) {
   return c4rec_fld(self, name, offs, &c4str);
 }
 
-struct c4rec *c4rec_init(struct c4rec *self, struct c4rec_t *type, c4uid_t id) {
+struct c4rec *c4rec_init(struct c4rec *self, struct c4rec_t *type) {
   self->type = type;
-  if (id) { c4uid_copy(self->id, id); }
-  else { c4uid_init(self->id); }
   return self;
 }
 
@@ -52,8 +55,7 @@ void c4rec_free(struct c4rec *self) {
 void c4rec_clone(struct c4rec *self) {
   C4BMAP_DO(&self->type->flds, it) {
     struct c4fld *fld = (struct c4fld *)c4pair_right(it); 
-    void *ptr = (void *)self + fld->offs;
-    *(void **)ptr = c4val_clone(fld->type, ptr);  
+    c4val_clone(fld->type, (void *)self + fld->offs);
   }
 }
 

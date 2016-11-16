@@ -36,7 +36,7 @@ static void run(struct c4malloc *m) {
 #define SLAB_SIZE MAX_SIZE * 1000
 
 void malloc_perf_tests() {
-  printf("%-20s %15s %15s\n", "name", "cpu", "real");
+  printf("%-20s %15s %15s\n", "allocator", "cpu", "real");
   unsigned int rand_seed = time(NULL);
 
   // --- basic ---
