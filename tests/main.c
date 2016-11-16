@@ -21,14 +21,14 @@
 #include "val.h"
 #include "utils.h"
 
-static int int_cmp(void *_x, void *_y, void *data) {
+static int cmp_int(void *_x, void *_y, void *data) {
   int *x = _x, *y = _y;
   if  (*x < *y) return -1;
   return *x > *y;
 }
 
 static void bmap_add_tests() {
-  C4BMAP(m, sizeof(int), sizeof(char), int_cmp);
+  C4BMAP(m, sizeof(int), sizeof(char), cmp_int);
 
   for (int i = 0; i < 10; i++) {
     struct c4pair *it = c4bmap_add(&m, &i);
@@ -44,7 +44,7 @@ static void bmap_add_tests() {
 }
 
 static void bmap_seq_tests() {
-  C4BMAP(m, sizeof(int), sizeof(char), int_cmp);
+  C4BMAP(m, sizeof(int), sizeof(char), cmp_int);
 
   for (int i = 0; i < 10; i++) {
     struct c4pair *it = c4bmap_add(&m, &i);
@@ -64,7 +64,7 @@ static void bmap_seq_tests() {
 }
 
 static void bmap_set_tests() {
-  C4BMAP(m, sizeof(int), sizeof(char), int_cmp);
+  C4BMAP(m, sizeof(int), sizeof(char), cmp_int);
 
   for (int i = 0; i < 5; i++) {
     struct c4pair *it = c4bmap_add(&m, &i);
@@ -94,7 +94,7 @@ static void bmap_tests() {
 static void bset_tests() {
   // Initialize set and populate in reverse order
   
-  C4BSET(set, sizeof(int), int_cmp);
+  C4BSET(set, sizeof(int), cmp_int);
   C4DEFER({ c4bset_free(&set); });
 
   static int MAX = 100;

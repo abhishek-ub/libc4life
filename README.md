@@ -311,10 +311,16 @@ c4life's binary sets are implemented as dynamic, binary searched arrays. Like dy
 
 #include <c4life/seqs/bset.h>
 
+int cmp_int(void *_x, void *_y, void *data) {
+  int *x = _x, *y = _y;
+  if  (*x < *y) return -1;
+  return *x > *y;
+}
+
 void bset_tests() {
   // Initialize set and populate in reverse order
   
-  C4BSET(set, sizeof(int), int_cmp);
+  C4BSET(set, sizeof(int), cmp_int);
   C4DEFER({ c4bset_free(&set); });
 
   static int MAX = 100;
