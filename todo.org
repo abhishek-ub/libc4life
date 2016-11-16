@@ -1,3 +1,14 @@
+* convert bset/map to multi
+** remove null return if found in add
+
+* add c4idx
+** vararg for flds
+*** push to dyna
+** use bmap for recs
+*** base key size on flds
+** add c4val_copy(type, dest, src)
+** use to blit vals to key
+
 * add C4REC_DO
 * add rec seq
 * add c4pair to readme
