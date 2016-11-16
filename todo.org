@@ -1,13 +1,17 @@
-* convert bset/map to multi
-** remove null return if found in add
+* finish converting main.c/val.c to C4IT
+
+* change bset.get_key to key_offs
+
+* change rec_t to use bset for flds
 
 * add c4idx
 ** vararg for flds
 *** push to dyna
-** use bmap for recs
+** use bset for recs
 *** base key size on flds
-** add c4val_copy(type, dest, src)
-** use to blit vals to key
+*** struct c4idx_key { c4uid id, char data[]; }
+*** add c4val_copy(type, dest, src)
+**** use to blit vals to key
 
 * add C4REC_DO
 * add rec seq

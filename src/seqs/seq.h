@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+#define C4IT(type, ptr)				\
+  *(type *)(ptr)				\
+
 #define _C4SEQ(type, model, var, _tseq)		\
   struct type _tseq;				\
   struct c4seq *var = type(model, &_tseq);	\

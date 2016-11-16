@@ -283,24 +283,26 @@ void dyna_tests() {
   
   C4DYNA(arr, sizeof(int));
   C4DEFER({ c4dyna_free(&arr); });
+  
+  const int MAX = 100;
 
-  const int LEN = 10;
+  // Preallocate to fit at least MAX/2 items
 
-  // Preallocate to fit at least LEN/2 items
-
-  c4dyna_grow(&arr, LEN/2);
+  c4dyna_grow(&arr, MAX/2);
 
   // Populate array
 
-  for (int i = 0; i < LEN; i++) { *(int *)c4dyna_push(&arr) = 1; }
-  assert(arr.len == LEN);
+  for (int i = 0; i < MAX; i++) { C4IT(int, c4dyna_push(&arr)) = i; }
+  assert(arr.len == MAX);
 
   // Empty array and check reverse order
 
-  for (int i = LEN-1; i >= 0; i--) { *(int *)c4dyna_pop(&arr) = i; }
+  for (int i = MAX - 1; i >= 0; i--) {
+    assert(C4IT(int, c4dyna_pop(&arr)) == i);
+  }
+  
   assert(arr.len == 0);
 }
-
 
 ```
 
@@ -325,8 +327,8 @@ void bset_tests() {
 
   static int MAX = 100;
 
-  for (int i = MAX-1; i >= 0; i--) { C4BSET_ADD(&set, int, i); }
-
+  for (int i = MAX-1; i >= 0; i--) { C4IT(int, c4bset_add(&set, &i)) = i; }
+  
   // Check number of items
 
   assert(c4bset_len(&set) == MAX);
@@ -334,11 +336,11 @@ void bset_tests() {
   for (int i = 0; i < MAX; i++) {
     // Look up item by key
 
-    assert(*(int *)c4bset_get(&set, &i) == i);
+    assert(C4IT(int, c4bset_get(&set, &i)) == i);
 
     // Look up item by index
     
-    assert(*(int *)c4bset_idx(&set, i) == i);
+    assert(C4IT(int, c4bset_idx(&set, i)) == i);
   }
 }
 

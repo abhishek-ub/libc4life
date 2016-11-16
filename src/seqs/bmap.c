@@ -24,7 +24,7 @@ void c4bmap_clear(struct c4bmap *self) { c4bset_clear(&self->its); }
 
 struct c4pair *c4bmap_add(struct c4bmap *self, void *key) {
   size_t idx;
-  if (c4bmap_find(self, key, 0, &idx)) { return NULL; }
+  c4bmap_find(self, key, 0, &idx);
   return c4bmap_insert(self, idx);
 }
 

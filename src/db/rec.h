@@ -43,5 +43,6 @@ void c4rec_free(struct c4rec *self);
 
 void c4rec_clone(struct c4rec *self);
 int c4rec_cmp(struct c4rec *self, struct c4rec *other);
+void *c4rec_get(struct c4rec *self, c4fld_t offs);
 
 #endif

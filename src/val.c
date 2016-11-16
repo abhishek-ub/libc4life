@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "seqs/seq.h"
 #include "val.h"
 
 struct c4val_t c4int32;
@@ -11,12 +12,14 @@ struct c4val_t c4str;
 C4STATIC(c4ls, c4val_ts);
 
 int c4cmp_int32(void *left, void *right) {
-  int32_t l = *(int32_t *)left, r = *(int32_t *)right;
+  int32_t l = C4IT(int32_t, left), r = C4IT(int32_t, right);
   if  (l < r) return -1;
   return l > r;
 }
 
-static void str_clone(void *val) { *(char **)val = strdup(*(char **)val); }
+static void str_clone(void *val) {
+  C4IT(char *, val) = strdup(C4IT(char *, val));
+}
 
 static int str_cmp(void *left, void *right) {
   return strcmp(*(char **)left, *(char **)right);

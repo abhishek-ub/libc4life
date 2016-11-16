@@ -28,11 +28,13 @@ struct c4fld *c4rec_fld(struct c4rec_t *self,
 			c4fld_t offs,
 			struct c4val_t *type) {
   struct c4pair *it = c4bmap_add(&self->flds, &offs);
-  *(c4fld_t *)c4pair_left(it) = offs;
-  return c4fld_init((struct c4fld *)c4pair_right(it), name, offs, type);
+  C4IT(c4fld_t, c4pair_left(it)) = offs;
+  return c4fld_init(c4pair_right(it), name, offs, type);
 }
 
-struct c4fld *c4rec_int32(struct c4rec_t *self, const char *name, c4fld_t offs) {
+struct c4fld *c4rec_int32(struct c4rec_t *self,
+			  const char *name,
+			  c4fld_t offs) {
   return c4rec_fld(self, name, offs, &c4int32);
 }
 
@@ -48,14 +50,14 @@ struct c4rec *c4rec_init(struct c4rec *self, struct c4rec_t *type) {
 void c4rec_free(struct c4rec *self) {
   C4BMAP_DO(&self->type->flds, it) {
     struct c4fld *fld = (struct c4fld *)c4pair_right(it); 
-    c4val_free(fld->type, (void *)self + fld->offs);
+    c4val_free(fld->type, c4rec_get(self, fld->offs));
   }
 }
 
 void c4rec_clone(struct c4rec *self) {
   C4BMAP_DO(&self->type->flds, it) {
     struct c4fld *fld = (struct c4fld *)c4pair_right(it); 
-    c4val_clone(fld->type, (void *)self + fld->offs);
+    c4val_clone(fld->type, c4rec_get(self, fld->offs));
   }
 }
 
@@ -65,11 +67,15 @@ int c4rec_cmp(struct c4rec *self, struct c4rec *other) {
   C4BMAP_DO(&self->type->flds, it) {
     struct c4fld *fld = (struct c4fld *)c4pair_right(it);
     int res = c4val_cmp(fld->type,
-			(void *)self + fld->offs,
-			(void *)other + fld->offs);
+			c4rec_get(self, fld->offs),
+			c4rec_get(self, fld->offs));
     if (res) { return res; }
   }
 
   return 0;
+}
+
+void *c4rec_get(struct c4rec *self, c4fld_t offs) {
+  return (void *)self + offs;
 }
 

@@ -18,8 +18,7 @@ void c4bset_free(struct c4bset *self) { c4dyna_free(&self->its); }
 
 void *c4bset_add(struct c4bset *self, void *key) {
   size_t idx;
-  struct c4bset_it *it = c4bset_find(self, key, 0, &idx);
-  if (it) { return NULL; }
+  c4bset_find(self, key, 0, &idx);
   return c4bset_insert(self, idx);
 }
 
