@@ -22,9 +22,9 @@
 #include "utils.h"
 
 static int cmp_int(void *_x, void *_y, void *data) {
-  int *x = _x, *y = _y;
-  if  (*x < *y) return -1;
-  return *x > *y;
+  int x = *(int *)_x, y = *(int *)_y;
+  if  (x < y) return -1;
+  return x > y;
 }
 
 static void bmap_add_tests() {
