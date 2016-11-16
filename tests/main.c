@@ -6,7 +6,7 @@
 #include "coro.h"
 #include "ctx.h"
 #include "db/col.h"
-#include "db/cols/str_col.h"
+#include "db/fld.h"
 #include "db/rec.h"
 #include "db/tbl.h"
 #include "defer.h"
@@ -119,17 +119,6 @@ static void bset_tests() {
     
     assert(*(int *)c4bset_idx(&set, i) == i);
   }
-}
-
-static void col_tests() {
-  struct c4val_t type;
-  c4val_t_init(&type, "foo");
-
-  struct c4col col;
-  c4col_init(&col, "bar", &type);
-  
-  c4col_free(&col);
-  c4val_t_free(&type);
 }
 
 struct coro_ctx { int i, line; };
@@ -349,20 +338,40 @@ static void pair_tests() {
   c4release(p);
 }
 
-static void rec_tests() {
-  struct c4str_col foo;
-  c4str_col_init(&foo, "foo");
-
+struct rec {
   struct c4rec rec;
-  c4rec_init(&rec, NULL);
-  c4set_str(&rec, &foo, "abc");
-  assert(strcmp(c4get_str(&rec, &foo), "abc") == 0);
+  int32_t int32;
+  char *str;
+};
+  
+static void rec_tests() {
+  // Define record type
+  C4REC_T(t);
+  c4rec_int32(&t, "int32", C4FLD(rec, int32));
+  c4rec_str(&t, "str", C4FLD(rec, str));
 
-  c4rec_free(&rec);
-  c4str_col_free(&foo);
+  // Initialize record
+  struct rec foo;
+  c4rec_init(&foo.rec, &t, NULL);
+  foo.int32 = 42;
+  foo.str = strdup("abc");
+
+  // Copy all fields from foo to new record.
+  // Implemented as assignment followed by cloning values
+  // for relevant fields.
+
+  struct rec bar;
+  C4REC_CLONE(&bar, &foo);
+  assert(c4rec_cmp(&bar.rec, &foo.rec) == 0);
+
+  c4rec_free(&foo.rec);
+  c4rec_free(&bar.rec);
+
+  c4rec_t_free(&t);
 }
 
 static void tbl_seq_tests() {
+/*
   struct c4tbl tbl;
   c4tbl_init(&tbl, "foo");
  
@@ -376,6 +385,7 @@ static void tbl_seq_tests() {
 
   c4rec_free(&rec);
   c4tbl_free(&tbl);
+*/
 }
 
 static void tbl_tests() {
@@ -390,7 +400,6 @@ int main() {
   C4TRY("run all tests") {
     bmap_tests();
     bset_tests();
-    col_tests();
     coro_tests();
     defer_tests();
     defer_scope_tests();

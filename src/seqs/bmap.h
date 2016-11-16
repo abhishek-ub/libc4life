@@ -10,6 +10,16 @@
   struct c4bmap var;				\
   c4bmap_init(&var, key_size, val_size, cmp);	\
 
+#define _C4BMAP_DO(map, it, _idx)					\
+  size_t _idx = 0;							\
+  for (struct c4pair *it;						\
+       _idx < c4bset_len(&map->its) &&					\
+	 (it = c4bset_idx(&map->its, _idx));				\
+       _idx++)								\
+
+#define C4BMAP_DO(map, it)					\
+  _C4BMAP_DO((map), it, C4GSYM(idx))				\
+
 struct c4pair;
 
 struct c4bmap {

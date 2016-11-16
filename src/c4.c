@@ -4,6 +4,7 @@
 #include <time.h>
 #include "c4.h"
 #include "ctx.h"
+#include "db/rec.h"
 #include "err.h"
 #include "mem/malloc.h"
 #include "val.h"

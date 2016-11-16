@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project (c4life)
 set(CMAKE_CXX_COMPILER "clang")
-add_definitions(-g -std=gnu99 -Wall -Werror)
+add_definitions(-O2 -std=gnu99 -Wall -Werror)
 
 include_directories(src)
 
@@ -21,9 +21,6 @@ install(FILES ${HEADERS}  DESTINATION include/${PROJECT_NAME})
 
 file(GLOB DB_HEADERS src/db/*.h)
 install(FILES ${DB_HEADERS} DESTINATION include/${PROJECT_NAME}/db)
-
-file(GLOB DB_COL_HEADERS src/db/cols/*.h)
-install(FILES ${DB_COL_HEADERS} DESTINATION include/${PROJECT_NAME}/db/cols)
 
 file(GLOB MEM_HEADERS src/mem/*.h)
 install(FILES ${DB_HEADERS} DESTINATION include/${PROJECT_NAME}/mem)

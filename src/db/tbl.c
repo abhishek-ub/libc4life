@@ -9,7 +9,7 @@
 #include "seqs/pair.h"
 #include "tbl.h"
 #include "uid.h"
-
+/*
 struct c4tbl *c4tbl_init(struct c4tbl *self, const char *name) {
   self->name = strdup(name);
   c4bmap_init(&self->recs, sizeof(c4uid_t), sizeof(struct c4bmap), c4uids_cmp);
@@ -78,3 +78,4 @@ struct c4rec *c4tbl_upsert(struct c4tbl *self, struct c4rec *rec) {
   c4bmap_merge(flds, &rec->flds);
   return rec;
 }
+*/

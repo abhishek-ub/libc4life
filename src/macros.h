@@ -10,17 +10,28 @@
 #define C4LAMBDA(code, ret, ...)			\
   _C4LAMBDA(code, ret, C4GSYM(fn), ##__VA_ARGS__)	\
 
-#define _C4MAX(x, y)				\
-  (x >= y ? x : y)				\
+#define C4MAX(a, b)				\
+  ({ typeof(a) _a = (a);			\
+    typeof(b) _b = (b);				\
+    _a > _b ? _a : _b; })			\
   
-#define C4MAX(x, y)				\
-  _C4MAX((x), (y))				\
-  
-#define _C4MIN(x, y)				\
-  (x <= y ? x : y)				\
+#define C4MIN(a, b)				\
+  ({ typeof(a) _a = (a);			\
+    typeof(b) _b = (b);				\
+    _a < _b ? _a : _b; })			\
 
-#define C4MAX(x, y)				\
-  _C4MAX((x), (y))				\
+#define C4STATIC(type, name)			\
+  struct type *name() {				\
+    static struct type val;			\
+    static bool init = true;			\
+						\
+    if (init) {					\
+      C4SYMS(type, _init)(&val);		\
+      init = false;				\
+    }						\
+						\
+    return &val;				\
+  }						\
 
 #define _C4SYMS(x, y)				\
   x ## y					\

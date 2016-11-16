@@ -8,6 +8,8 @@
 #include "err.h"
 #include "macros.h"
 
+C4STATIC(c4ls, c4err_ts);
+
 struct c4try *c4try_init(struct c4try *self,
 			 const char *msg,
 			 const char *file, int line) {
@@ -52,18 +54,6 @@ void c4try_close(struct c4try *self) {
 
 void c4try_ref(struct c4try *self) {
   for (struct c4try *t = self; t; t = t->super) { t->refs++; }
-}
-
-struct c4ls *c4err_ts() {
-  static struct c4ls ts;
-  static bool init = true;
-
-  if (init) {
-    c4ls_init(&ts);
-    init = false;
-  }
-
-  return &ts;
 }
 
 struct c4err_t *c4err_t_init(struct c4err_t *self,
